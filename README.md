@@ -102,3 +102,23 @@ Abaixo, uma figura que ajuda a compreender o caminho percorrido para, por exempl
 
 [1] https://datatracker.ietf.org/doc/html/rfc2396  
 [2] https://datatracker.ietf.org/doc/html/rfc7231
+
+
+
+
+
+/*
+  
+ Mexi no .env | .env.dev
+  no cadastro.html
+  Também alterei controllers (usuarioControllers), models (usuarioModels)
+  funções de cadstro, comentei algumas outras que testava pra ver se era realmente necessario.
+  Falta tirar bastante coisa ainda
+  Mexi no script-tabelas
+
+  Read me 
+
+
+
+
+*/

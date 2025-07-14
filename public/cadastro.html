@@ -47,32 +47,38 @@
     </div>
     <div class="container">
       <div class="card card-cadastro">
-        <h2>Bem-vindo!</h2>
+        <h2>Cadastro de livros</h2>
         <div class="formulario">
           <!--
                          Para inserir mais um campo, copie uma das inputs abaixo.
                          Assim que inserir vá para o script abaixo.
                      -->
+                         
           <div class="campo">
-            <span>Código de ativação:</span>
-            <input id="codigo_input" type="text" placeholder="Insira aqui seu código" />
+            <span>Titulo</span>
+            <input id="titulo_input" type="text" />
           </div>
           <div class="campo">
-            <span>Nome:</span>
-            <input id="nome_input" type="text" placeholder="Seu nome" />
+            <span>Autor</span>
+            <input id="autor_input" type="text" placeholder="J.K Rolling" />
           </div>
           <div class="campo">
-            <span>E-mail:</span>
-            <input id="email_input" type="text" placeholder="meuemail@provedor.com" />
+            <span>Preço de Compra</span>
+            <input id="precoCompra_input" type="number" />
           </div>
           <div class="campo">
-            <span>Senha:</span>
-            <input id="senha_input" type="password" placeholder="******" />
+            <span>Preço de Venda</span>
+            <input id="precoVenda_input" type="number"/>
           </div>
           <div class="campo">
-            <span>Confirmação da Senha:</span>
-            <input id="confirmacao_senha_input" type="password" placeholder="******" />
+            <span>Quantidade em estoque</span>
+            <input id="qtdEstoque_input" type="number"/>
           </div>
+           <div class="campo">
+            <span>Gênero</span>
+            <input id="genero_input" type="text"/>
+          </div>
+
           <button class="botao" onclick="cadastrar()">Cadastrar</button>
         </div>
         <div id="div_aguardar" class="loading-div">
@@ -100,26 +106,49 @@
 
   // Array para armazenar empresas cadastradas para validação de código de ativação 
   let listaEmpresasCadastradas = [];
+  let autoresVetor = [];
 
   function cadastrar() {
     // aguardar();
 
     //Recupere o valor da nova input pelo nome do id
     // Agora vá para o método fetch logo abaixo
-    var nomeVar = nome_input.value;
-    var emailVar = email_input.value;
-    var senhaVar = senha_input.value;
-    var confirmacaoSenhaVar = confirmacao_senha_input.value;
-    var codigoVar = codigo_input.value;
-    var idEmpresaVincular
+
+    //var nomeVar = nome_input.value;
+    var tituloVar = titulo_input.value;
+    
+    //var emailVar = email_input.value;
+    var autorVar = autor_input.value;
+    
+    //var senhaVar = senha_input.value;
+    var precoCompraVar = Number(precoCompra_input.value);
+
+    //var confirmacaoSenhaVar = confirmacao_senha_input.value;
+    var precoVendaVar = Number(precoVenda_input.value);
+
+    //var codigoVar = codigo_input.value;
+    var qtdEstoqueVar = Number(qtdEstoque_input.value);
+
+    //var idEmpresaVincular
+    var generoVar = genero_input.value;
+
+
+
 
     // Verificando se há algum campo em branco
     if (
-      nomeVar == "" ||
-      emailVar == "" ||
-      senhaVar == "" ||
-      confirmacaoSenhaVar == "" ||
-      codigoVar == ""
+      //nomeVar == "" ||
+      tituloVar == "" ||
+      //emailVar == "" ||
+      autorVar == "" ||
+      //senhaVar == "" ||
+      precoCompraVar == "" ||
+      //confirmacaoSenhaVar == "" ||
+      precoVendaVar == "" ||
+      //codigoVar == "" 
+      qtdEstoqueVar == "" ||
+
+      generoVar == "" 
     ) {
       cardErro.style.display = "block";
       mensagem_erro.innerHTML =
@@ -127,10 +156,35 @@
 
       finalizarAguardar();
       return false;
-    } else {
+    } 
+    else if(tituloVar == Number){
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "(Campo titulo nao pode ser numerico)";
+
+      finalizarAguardar();
+      return false;
+    }
+    else if(autorVar == Number){
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "(Campo autor nao pode ser numerico)";
+
+      finalizarAguardar();
+      return false;
+    }
+    //sem tempo de fazer com vetor
+    if(precoCompraVar >= 100 && generoVar == "romance" || generoVar == "horror"){
+      precoVendaVar += (precoCompraVar * 22.5) / 100
+    }  else if(precoCompraVar <= 50 ){
+
+    }
+
+    else {
       setInterval(sumirMensagem, 5000);
     }
 
+    /*
     // Verificando se o código de ativação é de alguma empresa cadastrada
     for (let i = 0; i < listaEmpresasCadastradas.length; i++) {
       if (listaEmpresasCadastradas[i].codigo_ativacao == codigoVar) {
@@ -142,7 +196,19 @@
         mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
         finalizarAguardar();
       }
+    }*/
+
+    for(let i = 0; i < autoresVetor.length; i++){
+      if(autoresVetor[i] == Number){
+        console.log("Autores devem ser texto, não numeros");
+        break 
+      }
+      else {
+        cardErro.style.display = "block";
+        mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
+        finalizarAguardar();
     }
+  }
 
     // Enviando o valor da nova input
     fetch("/usuarios/cadastrar", {
@@ -153,10 +219,21 @@
       body: JSON.stringify({
         // crie um atributo que recebe o valor recuperado aqui
         // Agora vá para o arquivo routes/usuario.js
-        nomeServer: nomeVar,
-        emailServer: emailVar,
-        senhaServer: senhaVar,
-        idEmpresaVincularServer: idEmpresaVincular
+
+        //nomeServer: nomeVar,
+        tituloServer: tituloVar,
+        //emailServer: emailVar,
+        autorServer: autorVar,
+        //senhaServer: senhaVar,
+        precoCompraServer: precoCompraVar,
+        //idEmpresaVincularServer: idEmpresaVincular
+        precoVendaServer: precoVendaVar,
+        //
+        qtdEstoqueServer: qtdEstoqueVar,
+        //
+        generoServer: generoVar
+
+
       }),
     })
       .then(function (resposta) {
@@ -185,6 +262,7 @@
 
     return false;
   }
+  
 
   // Listando empresas cadastradas 
   function listar() {
