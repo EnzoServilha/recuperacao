@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural de livros</title>
+</head>
+<body onload="listarLivros()">
+    <h1>Todos os livros cadastrados</h1>
+
+    <div id="result"></div>
+</body>
+<script>
+    
+    function listarLivros() {
+             var resultado = ""
+        fetch("/usuarios/mostrarLivros").then(function (resposta) {
+            if (resposta.ok) {
+                if (resposta.status == 204) {
+//                    var feed = document.getElementById("feed_container");
+//                  var mensagem = document.createElement("span");
+                    result.innerHTML = "Nenhum resultado encontrado."
+                    throw "Nenhum resultado encontrado!!";
+                }
+
+                resposta.json().then(function (resposta) {
+                    console.log("Dados recebidos: ", JSON.stringify(resposta));
+                    //Faltou percorrer o for pra que nao fique fixo só
+
+                for(var i = 0; i < resposta.length; i++){
+                
+
+                    result.innerHTML = `<div class="livrosCss">
+                    <h2>Titulo: ${resposta[i].Titulo}</h2>
+                    <h3>Autor: ${resposta[i].AutorNome}</h3>
+                    <h3>Genero: ${resposta[i].NomeGenero}</h3>
+                    <h3>Preço venda: ${resposta[i].PreçoVenda}</h3>
+                    <h3>Preço Compra: ${resposta[i].PreçoCompra}</h3>
+                    <h3>Quantidade no estoque: ${resposta[i].QuantidadeEstoque}</h3>
+                    </div>`;
+
+                }
+
+                /*
+                    result.innerHTML = `<div class="livrosCss">
+                    <h2>Titulo: ${resposta[0].Titulo}</h2>
+                    <h3>Autor: ${resposta[0].AutorNome}</h3>
+                    <h3>Genero: ${resposta[0].NomeGenero}</h3>
+                    <h3>Preço venda: ${resposta[0].PreçoVenda}</h3>
+                    <h3>Preço Compra: ${resposta[0].PreçoCompra}</h3>
+                    <h3>Quantidade no estoque: ${resposta[0].QuantidadeEstoque}</h3>
+                    </div>`;
+*/
+                
+                //fazer inner join pra que nomes autores sejam nomes e nao venham como numeros
+
+                   /* for (let i = 0; i < resposta.length; i++) {
+                        var publicacao = resposta[i];
+                      
+                    }*/
+        
+                });
+            } else {
+                throw ('Houve um erro na API!');
+            }
+        });
+    
+       /* .then(res => res.json())
+        .then(livros => {
+            livros.forEach(livros => {
+                resultado += `<div class="livrosCss">
+                    <h2>${livros.titulo}</h2>
+                    <h3>Autor: ${livros.autor}</h3>
+                    <h3>Genero: ${livros.genero}</h3>
+                    <h3>Preço venda: ${livros.precoVenda}</h3>
+                    <h3>Preço Compra: ${livros.precoCompra}</h3>
+                    <h3>Quantidade no estoque: ${livros.qtdEstoque}</h3>
+                    </div>`
+            })
+            result.innerHTML = resultado 
+        })
+          .catch(function (resposta) {
+        console.log(`#ERRO: Os dados não chegaram Teste log`);
+      });*/
+
+//json stringfy tratamento
+//nao aparece no console o select 
+
+    }
+</script>
+</html>

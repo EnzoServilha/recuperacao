@@ -15,7 +15,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" />
 </head>
 
-<body onload="listar()">
   <!--header inicio-->
   <div class="header">
     <div class="container">
@@ -76,7 +75,12 @@
           </div>
            <div class="campo">
             <span>Gênero</span>
-            <input id="genero_input" type="text"/>
+            <select name="genero" id="genero_input"> //drop down
+              <option value="1">Romance</option>
+              <option value="2">Horror</option>
+              <option value="3">Poesia</option>
+              <option value="4">Fantasia</option>
+            </select>
           </div>
 
           <button class="botao" onclick="cadastrar()">Cadastrar</button>
@@ -99,14 +103,13 @@
   </div>
   <!--footer fim-->
 </body>
-
 </html>
-
 <script>
 
-  // Array para armazenar empresas cadastradas para validação de código de ativação 
-  let listaEmpresasCadastradas = [];
-  let autoresVetor = [];
+  var caracteresAceitos = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+   'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', " "]
+
+  var invalido = false
 
   function cadastrar() {
     // aguardar();
@@ -114,26 +117,12 @@
     //Recupere o valor da nova input pelo nome do id
     // Agora vá para o método fetch logo abaixo
 
-    //var nomeVar = nome_input.value;
     var tituloVar = titulo_input.value;
-    
-    //var emailVar = email_input.value;
     var autorVar = autor_input.value;
-    
-    //var senhaVar = senha_input.value;
     var precoCompraVar = Number(precoCompra_input.value);
-
-    //var confirmacaoSenhaVar = confirmacao_senha_input.value;
     var precoVendaVar = Number(precoVenda_input.value);
-
-    //var codigoVar = codigo_input.value;
     var qtdEstoqueVar = Number(qtdEstoque_input.value);
-
-    //var idEmpresaVincular
     var generoVar = genero_input.value;
-
-
-
 
     // Verificando se há algum campo em branco
     if (
@@ -157,58 +146,33 @@
       finalizarAguardar();
       return false;
     } 
-    else if(tituloVar == Number){
+
+    for(var i = 0; i < autorVar.length; i++){
+      var caracterAtual = autorVar[i].toLowerCase()
+
+      if(!caracteresAceitos.includes(caracterAtual)){
+        invalido = true
+        break
+      }
+    }
+
+    if(invalido){
       cardErro.style.display = "block";
       mensagem_erro.innerHTML =
-        "(Campo titulo nao pode ser numerico)";
+        "Nome autor não pode conter numeros ou caracteres especiais";
 
       finalizarAguardar();
       return false;
     }
-    else if(autorVar == Number){
-      cardErro.style.display = "block";
-      mensagem_erro.innerHTML =
-        "(Campo autor nao pode ser numerico)";
-
-      finalizarAguardar();
-      return false;
+    //Validações coompra e venda enunciado 
+    if(precoCompraVar >= 100 && (generoVar == "romance" || generoVar == "horror")){
+      precoVendaVar = precoCompraVar * 1.225
+    }  else if(precoCompraVar <= 50  && (generoVar == "poesia" || generoVar == "horror")){
+      precoVendaVar = precoCompraVar * 1.25
     }
-    //sem tempo de fazer com vetor
-    if(precoCompraVar >= 100 && generoVar == "romance" || generoVar == "horror"){
-      precoVendaVar += (precoCompraVar * 22.5) / 100
-    }  else if(precoCompraVar <= 50 ){
-
+      else if(precoCompraVar > 50 && precoCompraVar < 100 && generoVar == "fantasia" ){
+      precoVendaVar = precoCompraVar * 1.275
     }
-
-    else {
-      setInterval(sumirMensagem, 5000);
-    }
-
-    /*
-    // Verificando se o código de ativação é de alguma empresa cadastrada
-    for (let i = 0; i < listaEmpresasCadastradas.length; i++) {
-      if (listaEmpresasCadastradas[i].codigo_ativacao == codigoVar) {
-        idEmpresaVincular = listaEmpresasCadastradas[i].id
-        console.log("Código de ativação válido.");
-        break;
-      } else {
-        cardErro.style.display = "block";
-        mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
-        finalizarAguardar();
-      }
-    }*/
-
-    for(let i = 0; i < autoresVetor.length; i++){
-      if(autoresVetor[i] == Number){
-        console.log("Autores devem ser texto, não numeros");
-        break 
-      }
-      else {
-        cardErro.style.display = "block";
-        mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
-        finalizarAguardar();
-    }
-  }
 
     // Enviando o valor da nova input
     fetch("/usuarios/cadastrar", {
@@ -220,20 +184,13 @@
         // crie um atributo que recebe o valor recuperado aqui
         // Agora vá para o arquivo routes/usuario.js
 
-        //nomeServer: nomeVar,
         tituloServer: tituloVar,
-        //emailServer: emailVar,
         autorServer: autorVar,
-        //senhaServer: senhaVar,
         precoCompraServer: precoCompraVar,
-        //idEmpresaVincularServer: idEmpresaVincular
         precoVendaServer: precoVendaVar,
-        //
         qtdEstoqueServer: qtdEstoqueVar,
-        //
         generoServer: generoVar
-
-
+        
       }),
     })
       .then(function (resposta) {
@@ -246,7 +203,7 @@
             "Cadastro realizado com sucesso! Redirecionando para tela de Login...";
 
           setTimeout(() => {
-            window.location = "login.html";
+            window.location = "muralLivros.html";
           }, "2000");
 
           limparFormulario();
@@ -263,26 +220,17 @@
     return false;
   }
   
-
-  // Listando empresas cadastradas 
-  function listar() {
-    fetch("/empresas/listar", {
-      method: "GET",
-    })
-      .then(function (resposta) {
-        resposta.json().then((empresas) => {
-          empresas.forEach((empresa) => {
-            listaEmpresasCadastradas.push(empresa);
-
-            console.log("listaEmpresasCadastradas")
-            console.log(listaEmpresasCadastradas[0].codigo_ativacao)
-          });
-        });
-      })
-      .catch(function (resposta) {
-        console.log(`#ERRO: ${resposta}`);
-      });
-  }
+  fetch('/generos')
+    .then(response => response.json())
+    .then(generos => {
+      var select = document.getElementById('genero_input')
+      generos.forEach(genero => {
+        var option = document.createElement('option')
+        option.value = genero.idGeneros
+        option.textContent = genero.nome
+          select.appendChild(option)// adiciona as opções que estao no select nesse loop do for each
+        })
+      }) 
 
   function sumirMensagem() {
     cardErro.style.display = "none";
